@@ -1,6 +1,3 @@
-import MusicVisualization from '../src/index';
-import './index.css';
-
 // 播放按钮
 const playBtn = document.getElementById('play');
 
@@ -21,7 +18,7 @@ const btnState = {
     click: () => {}
   },
   playing: {
-    text: '暂停',
+    text: 'Stop',
     click(mv) {
       mv.stop();
     }
@@ -37,7 +34,7 @@ const btnState = {
 changeBtnState(btnState.loading);
 
 const mv = new MusicVisualization({
-  src: 'http://new-sound.iqing.com/play/7dc218c1-c75a-439e-99a7-35de2cca9ad8.aac',
+  src: 'https://listen.moe/stream',
   onPlay: () => {
     changeBtnState(btnState.playing);
   },

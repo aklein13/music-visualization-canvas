@@ -6,7 +6,6 @@ declare const webkitAudioContext: {
 export interface Options {
   src: string;
   minHeight?: number;
-  gap?: number;
   onPlay?: () => void;
   onStop?: () => void;
   audioEvents?: {
@@ -29,8 +28,7 @@ class MusicVisualization {
   constructor(options: Options) {
     this.options = {
       src: '',
-      gap: 0,
-      minHeight: 10,
+      minHeight: 0,
       onPlay: () => {},
       onStop: () => {},
       audioEvents: {},
@@ -214,8 +212,8 @@ class MusicVisualization {
 
   private drawGraph(arr: Uint8Array) {
     const { canvasCtx } = this;
-    const { minHeight, gap } = this.options;
-    const singleWidth = this.width / 2 - gap;
+    const { minHeight } = this.options;
+    const singleWidth = this.width;
     canvasCtx.beginPath();
     canvasCtx.moveTo(0, 0);
     canvasCtx.lineTo(0, minHeight);
@@ -233,8 +231,8 @@ class MusicVisualization {
 
   private drawLine(arr: Uint8Array) {
     const { canvasCtx } = this;
-    const { gap, minHeight } = this.options;
-    const singleWidth = this.width / 2 - gap;
+    const { minHeight } = this.options;
+    const singleWidth = this.width;
     canvasCtx.beginPath();
     canvasCtx.moveTo(0, 0);
     this.drawCurveLine({
@@ -253,8 +251,7 @@ class MusicVisualization {
       return;
     }
     const { analyser, canvasCtx, width, height } = this;
-    const { gap } = this.options;
-    const singleWidth = this.width / 2 - gap;
+    const singleWidth = this.width;
     const bufferLength = analyser.frequencyBinCount - 5;
     const dataArray = new Uint8Array(bufferLength).slice(0, -20);
 
@@ -266,30 +263,15 @@ class MusicVisualization {
     gradientLeft.addColorStop(0, '#ff30a2');
     gradientLeft.addColorStop(1, '#d8db31');
 
-    const gradientRight = canvasCtx.createLinearGradient(0, 0, singleWidth, 0);
-    gradientRight.addColorStop(0, '#00cf2e');
-    gradientRight.addColorStop(1, '#3bddd2');
-
     // 镜像 翻转 左边
     canvasCtx.save();
     canvasCtx.transform(1, 0, 0, -1, 0, height);
     canvasCtx.fillStyle = gradientLeft;
     canvasCtx.strokeStyle = gradientLeft;
     this.drawGraph(dataArray);
-    this.drawLine(dataArray);
-    canvasCtx.restore();
-
-    // 镜像再 翻转 右边
-    canvasCtx.save();
-    canvasCtx.transform(-1, 0, 0, -1, width, height);
-    canvasCtx.fillStyle = gradientRight;
-    canvasCtx.strokeStyle = gradientRight;
-    this.drawGraph(dataArray);
-    this.drawLine(dataArray);
+    // this.drawLine(dataArray);
     canvasCtx.restore();
 
     this.drawRafId = requestAnimationFrame(this.draw.bind(this));
   }
 }
-
-export default MusicVisualization;
